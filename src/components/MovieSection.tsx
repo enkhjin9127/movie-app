@@ -5,14 +5,15 @@ import axios from "axios";
 import Image from "next/image";
 import { Star } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_IMAGE_BASE_URL = process.env.NEXT_PUBLIC_TMDB_IMAGE_SERVICE_URL;
-const TMDB_API_TOKEN = process.env.TMDB_API_TOKEN;
+const TMDB_API_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_TOKEN;
 
 interface MovieSectionProps {
   title: string;
-  endpoint: string; // API URL for different categories
+  endpoint: string;
 }
 
 export default function MovieSection({ title, endpoint }: MovieSectionProps) {
@@ -27,13 +28,15 @@ export default function MovieSection({ title, endpoint }: MovieSectionProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const router = useRouter();
+
   const fetchMovies = async () => {
     try {
       setLoading(true);
       const response = await axios.get(`${TMDB_BASE_URL}${endpoint}`, {
         headers: { Authorization: `Bearer ${TMDB_API_TOKEN}` },
       });
-      setMovies(response.data.results.slice(0, 10)); // Limit to 10 movies
+      setMovies(response.data.results.slice(0, 10));
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(
@@ -60,17 +63,14 @@ export default function MovieSection({ title, endpoint }: MovieSectionProps) {
           </Link>
         </div>
 
-        {/* Loading & Error Handling */}
-        {loading && <p>Loading {title} movies...</p>}
-        {error && <p className="text-red-500">{error}</p>}
-
         {/* Movie Grid */}
         {!loading && !error && movies.length > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {movies.map((movie) => (
               <div
                 key={movie.id}
-                className=" rounded-lg shadow-sm overflow-hidden"
+                className="rounded-lg shadow-sm overflow-hidden cursor-pointer"
+                onClick={() => router.push(`/movie/${movie.id}`)} // Navigate to movie page
               >
                 <Image
                   src={`${TMDB_IMAGE_BASE_URL}/w300${movie.poster_path}`}

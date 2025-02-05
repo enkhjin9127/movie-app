@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
-import { Star, Play } from "lucide-react";
+import { Star, Play, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -15,20 +15,22 @@ import {
 
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_IMAGE_BASE_URL = process.env.NEXT_PUBLIC_TMDB_IMAGE_SERVICE_URL;
-const TMDB_API_TOKEN = process.env.TMDB_API_TOKEN;
+const TMDB_API_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_TOKEN;
 
 export default function NowPlaying() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [popularMoviesData, setPopularMoviesData] = useState<Movie[]>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [trailerUrl, setTrailerUrl] = useState<string | null>(null);
+
   interface Movie {
+    id: number;
     backdrop_path: string;
     title: string;
     vote_average: number;
     overview: string;
   }
-
-  const [popularMoviesData, setPopularMoviesData] = useState<Movie[]>([]);
-  const [activeIndex, setActiveIndex] = useState(0);
 
   const getMovieData = async () => {
     try {
@@ -39,7 +41,7 @@ export default function NowPlaying() {
           headers: { Authorization: `Bearer ${TMDB_API_TOKEN}` },
         }
       );
-      setPopularMoviesData(response.data.results.slice(0, 8)); // Limit to 8 movies
+      setPopularMoviesData(response.data.results.slice(0, 8));
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(
@@ -51,23 +53,44 @@ export default function NowPlaying() {
     }
   };
 
+  const getMovieTrailer = async (movieId: number) => {
+    try {
+      const response = await axios.get(
+        `${TMDB_BASE_URL}/movie/${movieId}/videos?language=en-US`,
+        {
+          headers: { Authorization: `Bearer ${TMDB_API_TOKEN}` },
+        }
+      );
+      const trailers = response.data.results.filter(
+        (video: { type: string; site: string; key: string }) =>
+          video.type === "Trailer" && video.site === "YouTube"
+      );
+      if (trailers.length > 0) {
+        setTrailerUrl(`https://www.youtube.com/embed/${trailers[0].key}`);
+      } else {
+        setTrailerUrl(null);
+      }
+    } catch (error) {
+      console.error("Error fetching trailer:", error);
+    }
+  };
+
   useEffect(() => {
     getMovieData();
   }, []);
 
-  // Auto-slide effect
   useEffect(() => {
     if (popularMoviesData.length === 0) return;
 
     const interval = setInterval(() => {
       setActiveIndex((prevIndex) => (prevIndex + 1) % popularMoviesData.length);
-    }, 5000); // Change slide every 5 seconds
+    }, 8000);
 
     return () => clearInterval(interval);
   }, [popularMoviesData]);
 
   return (
-    <div className=" flex flex-col items-center">
+    <div className="flex flex-col items-center">
       {loading && <p className="text-center mt-10">Loading movies...</p>}
       {error && <p className="text-center mt-10 text-red-500">{error}</p>}
 
@@ -117,6 +140,7 @@ export default function NowPlaying() {
                     <Button
                       variant="outline"
                       className="mt-4 w-[144.45px] flex items-center justify-center bg-gray-200 dark:bg-gray-800 dark:text-white ml-4"
+                      onClick={() => getMovieTrailer(movie.id)}
                     >
                       <Play className="w-4 h-4" />
                       <span>Watch Trailer</span>
@@ -126,7 +150,6 @@ export default function NowPlaying() {
               ))}
             </CarouselContent>
 
-            {/* ✅ Show Buttons Only on Larger Screens */}
             <div className="hidden md:block">
               <CarouselPrevious
                 onClick={() =>
@@ -136,7 +159,7 @@ export default function NowPlaying() {
                       : prevIndex - 1
                   )
                 }
-                className="absolute left-5 top-[40%] transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full z-10"
+                className="absolute left-5 top-[50%] transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full z-10"
               />
               <CarouselNext
                 onClick={() =>
@@ -144,10 +167,29 @@ export default function NowPlaying() {
                     (prevIndex) => (prevIndex + 1) % popularMoviesData.length
                   )
                 }
-                className="absolute right-5 top-[40%] transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full z-10"
+                className="absolute right-5 top-[50%] transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full z-10"
               />
             </div>
           </Carousel>
+        </div>
+      )}
+
+      {trailerUrl && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
+          <div className="relative w-[90%] max-w-3xl bg-white p-4 rounded-lg">
+            <button
+              onClick={() => setTrailerUrl(null)}
+              className="absolute top-2 right-2 bg-gray-200 p-2 rounded-full"
+            >
+              <X className="w-6 h-6 text-black" />
+            </button>
+            <iframe
+              className="w-full h-[300px] lg:h-[500px]"
+              src={trailerUrl}
+              title="Movie Trailer"
+              allow="fullscreen"
+            ></iframe>
+          </div>
         </div>
       )}
     </div>
