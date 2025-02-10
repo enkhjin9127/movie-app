@@ -65,11 +65,13 @@ export default function NowPlaying() {
         (video: { type: string; site: string; key: string }) =>
           video.type === "Trailer" && video.site === "YouTube"
       );
+
       if (trailers.length > 0) {
         setTrailerUrl(`https://www.youtube.com/embed/${trailers[0].key}`);
       } else {
         setTrailerUrl(null);
       }
+      console.log(setTrailerUrl);
     } catch (error) {
       console.error("Error fetching trailer:", error);
     }
@@ -176,7 +178,7 @@ export default function NowPlaying() {
 
       {trailerUrl && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
-          <div className="relative w-[90%] max-w-3xl bg-white p-4 rounded-lg">
+          <div className="relative w-[90%] max-w-3xl p-4 rounded-lg">
             <button
               onClick={() => setTrailerUrl(null)}
               className="absolute top-2 right-2 bg-gray-200 p-2 rounded-full"
