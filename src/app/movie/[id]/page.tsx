@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Play, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import MoreLikeThis from "@/components/MoreLikesThis";
 
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_IMAGE_BASE_URL = process.env.NEXT_PUBLIC_TMDB_IMAGE_SERVICE_URL;
@@ -197,7 +198,7 @@ export default function MovieDetail() {
     return <p className="text-center mt-10 text-red-500">Movie not found.</p>;
 
   return (
-    <div className="py-10 pt-[59px] px-4">
+    <div className="py-10 pt-[59px] px-4 max-w-[1150px] mx-auto">
       <div className="flex justify-between mt-8 mb-4 px-5">
         <div>
           <h1 className="text-2xl font-bold w-52 lg:w-fit lg:text-4xl">
@@ -215,14 +216,23 @@ export default function MovieDetail() {
       </div>
       <div className="px-5">
         <div className="relative w-[375px] h-[211px] lg:w-[760px] lg:h-[428px] lg:rounded">
-          <Image
-            src={`${TMDB_IMAGE_BASE_URL}/original${movie.backdrop_path}`}
-            alt={movie.title}
-            layout="fill"
-            className="object-cover"
-          />
-
-          <div className="flex items-center relative text-white w-[195px] top-36 left-6 lg:top-[22.5rem] ">
+          <div className="flex gap-x-8 mb-8">
+            <Image
+              src={`${TMDB_IMAGE_BASE_URL}/original${movie.poster_path}`}
+              alt={movie.poster_path}
+              width={288}
+              height={428}
+              className="object-cover hidden lg:block"
+            />
+            <Image
+              src={`${TMDB_IMAGE_BASE_URL}/original${movie.backdrop_path}`}
+              alt={movie.title}
+              className="object-cover"
+              width={760}
+              height={428}
+            />
+          </div>
+          <div className="flex items-center relative text-white w-[195px] lg:left-[21.5rem] lg:top-[-5.5rem] left-4 bottom-[5.5rem]">
             <Button
               variant={"secondary"}
               onClick={() => setIsTrailerOpen(true)}
@@ -237,7 +247,7 @@ export default function MovieDetail() {
       </div>
 
       <div className="flex gap-x-[34px] px-5 pt-8">
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 lg:hidden">
           <Image
             src={`${TMDB_IMAGE_BASE_URL}/original${movie.poster_path}`}
             width={100}
@@ -265,27 +275,29 @@ export default function MovieDetail() {
       </div>
       <div className="space-y-5 text-foreground mb-8 px-5 mt-4">
         <div className="space-y-1">
-          <div className="flex pb-1 justify-between">
+          <div className="flex pb-1">
             <div className="font-bold w-20">Director:</div>
             <div>{director}</div>
           </div>
         </div>
         <div className="shrink-0 bg-border h-[1px] w-full my-1"></div>
         <div className="space-y-1">
-          <div className="flex pb-1 justify-between">
-            <div className="font-bold w-20 mr-13">Writers:</div>
+          <div className="flex pb-1 ">
+            <div className="font-bold w-20 pr-8">Writers:</div>
             <div>{writers}</div>
           </div>
         </div>
         <div className="shrink-0 bg-border h-[1px] w-full my-1"></div>
         <div className="space-y-1">
-          <div className="flex pb-1 justify-between">
-            <div className="font-bold w-20 mr-13">Stars:</div>
+          <div className="flex pb-1 ">
+            <div className="font-bold w-20 pr-14">Stars:</div>
             <div>{stars}</div>
           </div>
         </div>
         <div className="shrink-0 bg-border h-[1px] w-full my-1"></div>
       </div>
+
+      <MoreLikeThis />
 
       {/* Trailer Modal */}
       {isTrailerOpen && trailerUrl && (

@@ -1,6 +1,8 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Film, Search, Moon, Sun, ChevronDown } from "lucide-react";
 import { Button } from "./ui/button";
 import SearchBar from "./SearchBar";
@@ -18,12 +20,40 @@ interface Genre {
 
 const Header = () => {
   const { setTheme, theme } = useTheme();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [genres, setGenres] = useState<Genre[]>([]);
+  const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
   const [isGenreOpen, setIsGenreOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const genreRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        genreRef.current &&
+        !genreRef.current.contains(event.target as Node)
+      ) {
+        setIsGenreOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Load selected genres from URL on mount
+  useEffect(() => {
+    const genreIdsFromURL = searchParams.get("genreIds");
+    if (genreIdsFromURL) {
+      setSelectedGenres(genreIdsFromURL.split(",").map(Number));
+    }
+  }, [searchParams]);
+
+  // Fetch genres from TMDB API
   useEffect(() => {
     const fetchGenres = async () => {
       if (!TMDB_API_TOKEN || !TMDB_BASE_URL) {
@@ -41,8 +71,6 @@ const Header = () => {
           }
         );
 
-        console.log("Fetched Genres:", response.data);
-
         if (response.data.genres && response.data.genres.length > 0) {
           setGenres(response.data.genres);
         } else {
@@ -59,6 +87,24 @@ const Header = () => {
 
     fetchGenres();
   }, []);
+
+  // Handle genre selection
+  const handleGenreChange = (genreId: number) => {
+    const updatedGenres = selectedGenres.includes(genreId)
+      ? selectedGenres.filter((id) => id !== genreId) // Remove if already selected
+      : [...selectedGenres, genreId]; // Add if not selected
+
+    setSelectedGenres(updatedGenres);
+
+    const queryParams = new URLSearchParams(searchParams);
+    if (updatedGenres.length > 0) {
+      queryParams.set("genreIds", updatedGenres.join(","));
+    } else {
+      queryParams.delete("genreIds");
+    }
+
+    router.replace(`/genres?${queryParams.toString()}`, { scroll: false });
+  };
 
   return (
     <div className="fixed top-0 inset-x-0 z-20 h-[59px] bg-background flex items-center justify-center">
@@ -80,7 +126,10 @@ const Header = () => {
 
           {/* Genre Dropdown Menu */}
           {isGenreOpen && (
-            <div className="absolute top-12 left-0 bg-white shadow-lg rounded-lg p-5 w-[400px] z-50">
+            <div
+              ref={genreRef}
+              className="absolute top-12 left-0 bg-white shadow-lg rounded-lg p-5 w-[400px] z-50"
+            >
               <h3 className="text-lg font-bold">Genres</h3>
               <p className="text-sm text-gray-500 mb-3">
                 See lists of movies by genre
@@ -95,7 +144,12 @@ const Header = () => {
                   {genres.map((genre) => (
                     <Badge
                       key={genre.id}
-                      className="px-3 py-2 text-sm rounded-full border"
+                      onClick={() => handleGenreChange(genre.id)}
+                      className={`px-3 py-2 text-sm rounded-full border cursor-pointer transition ${
+                        selectedGenres.includes(genre.id)
+                          ? "bg-black text-white border-black"
+                          : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                      }`}
                     >
                       {genre.name}
                     </Badge>

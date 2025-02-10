@@ -54,12 +54,15 @@ export default function GenreFilter() {
 
     setSelectedGenres(updatedGenres);
 
-    const queryParams = new URLSearchParams();
+    // Update URL Params
+    const queryParams = new URLSearchParams(searchParams);
     if (updatedGenres.length > 0) {
       queryParams.set("genreIds", updatedGenres.join(","));
+    } else {
+      queryParams.delete("genreIds");
     }
 
-    router.push(`/genres?${queryParams.toString()}`, { scroll: false });
+    router.replace(`/genres?${queryParams.toString()}`, { scroll: false });
   };
 
   return (
@@ -70,11 +73,14 @@ export default function GenreFilter() {
         {genres.map((genre) => (
           <Badge
             key={genre.id}
-            variant={selectedGenres.includes(genre.id) ? "default" : "outline"}
-            className="cursor-pointer"
             onClick={() => handleGenreChange(genre.id)}
+            className={`cursor-pointer px-3 py-2 rounded-full border transition ${
+              selectedGenres.includes(genre.id)
+                ? "bg-black text-white border-black"
+                : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+            }`}
           >
-            {genre.name} {selectedGenres.includes(genre.id)}
+            {genre.name}
           </Badge>
         ))}
       </div>

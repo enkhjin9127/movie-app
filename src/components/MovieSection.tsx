@@ -58,36 +58,43 @@ export default function MovieSection({ title, endpoint }: MovieSectionProps) {
         {/* Section Header */}
         <div className="flex justify-between items-center mb-5">
           <h2 className="text-2xl font-bold">{title}</h2>
-          <Link href="/" className="text-gray-500 hover:text-black text-sm">
+          <Link
+            href={`/movies/${endpoint.replace("/movie/", "")}`}
+            className="text-gray-500 hover:text-black text-sm"
+          >
             See more →
           </Link>
         </div>
 
         {/* Movie Grid */}
         {!loading && !error && movies.length > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
             {movies.map((movie) => (
               <div
                 key={movie.id}
-                className="rounded-lg shadow-sm overflow-hidden cursor-pointer"
-                onClick={() => router.push(`/movie/${movie.id}`)} // Navigate to movie page
+                className="rounded-lg shadow-md overflow-hidden cursor-pointer transition-transform duration-200 hover:scale-105 bg-white dark:bg-[#1a1a1a]"
+                onClick={() => router.push(`/movie/${movie.id}`)}
               >
-                <Image
-                  src={`${TMDB_IMAGE_BASE_URL}/w300${movie.poster_path}`}
-                  alt={movie.title}
-                  width={180}
-                  height={270}
-                  className="w-full h-auto rounded-lg"
-                />
-                <div className="p-2 bg-gray-100 dark:bg-[#262626]">
-                  <div className="flex items-center text-xs ">
+                <div className="w-full h-[340px] overflow-hidden">
+                  <Image
+                    src={`${TMDB_IMAGE_BASE_URL}/w300${movie.poster_path}`}
+                    alt={movie.title}
+                    width={180}
+                    height={340}
+                    className="w-full h-full object-cover rounded-t-lg"
+                  />
+                </div>
+                <div className="p-3 bg-gray-100 dark:bg-[#262626]">
+                  <div className="flex items-center text-xs font-medium text-gray-700 dark:text-gray-300">
                     <Star
-                      className="w-3 h-3 text-yellow-400 mr-1"
+                      className="w-4 h-4 text-yellow-400 mr-1"
                       fill="currentColor"
                     />
                     {movie.vote_average.toFixed(1)}/10
                   </div>
-                  <h3 className="mt-1 text-lg font-medium">{movie.title}</h3>
+                  <h3 className="mt-2 text-md font-semibold leading-tight">
+                    {movie.title}
+                  </h3>
                 </div>
               </div>
             ))}

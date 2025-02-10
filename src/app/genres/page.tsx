@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import GenreFilter from "@/components/GenreFilter";
 import Image from "next/image";
+import { Star } from "lucide-react";
 
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_API_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_TOKEN;
@@ -70,20 +71,23 @@ export default function GenresPage() {
           movies.map((movie) => (
             <div
               key={movie.id}
-              className="bg-white shadow-md rounded-lg overflow-hidden"
+              className="rounded-lg shadow-sm overflow-hidden cursor-pointer"
             >
               <Image
                 src={`${TMDB_IMAGE_BASE_URL}/w500${movie.poster_path}`}
                 alt={movie.title}
                 width={250}
                 height={375}
-                className="object-cover"
+                className="w-full h-auto rounded-lg"
               />
-              <div className="p-2">
-                <h2 className="text-sm font-semibold">{movie.title}</h2>
-                <p className="text-yellow-500 text-xs">
-                  ⭐ {movie.vote_average.toFixed(1)}/10
-                </p>
+              <div className="p-2 bg-gray-100 dark:bg-[#262626]">
+                <div className="flex items-center text-xs ">
+                  <Star
+                    className="w-3 h-3 text-yellow-400 mr-1"
+                    fill="currentColor"
+                  />
+                  {movie.vote_average.toFixed(1)}/10
+                </div>
               </div>
             </div>
           ))

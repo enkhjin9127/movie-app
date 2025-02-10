@@ -81,15 +81,15 @@ export default function NowPlaying() {
     getMovieData();
   }, []);
 
-  useEffect(() => {
-    if (popularMoviesData.length === 0) return;
+  // useEffect(() => {
+  //   if (popularMoviesData.length === 0) return;
 
-    const interval = setInterval(() => {
-      setActiveIndex((prevIndex) => (prevIndex + 1) % popularMoviesData.length);
-    }, 8000);
+  //   const interval = setInterval(() => {
+  //     setActiveIndex((prevIndex) => (prevIndex + 1) % popularMoviesData.length);
+  //   }, 8000);
 
-    return () => clearInterval(interval);
-  }, [popularMoviesData]);
+  //   return () => clearInterval(interval);
+  // }, [popularMoviesData]);
 
   return (
     <div className="flex flex-col items-center">
