@@ -111,7 +111,7 @@ export default function MovieCategoryPage() {
               <button
                 onClick={() => changePage(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="px-4 py-2 text-sm bg-gray-300 rounded-md disabled:opacity-50"
+                className="px-4 py-2 text-sm rounded-md"
               >
                 ← Previous
               </button>
@@ -123,7 +123,7 @@ export default function MovieCategoryPage() {
               <button
                 onClick={() => changePage(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="px-4 py-2 text-sm bg-gray-300 rounded-md disabled:opacity-50"
+                className="px-4 py-2 text-sm rounded-md "
               >
                 Next →
               </button>

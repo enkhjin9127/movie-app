@@ -55,8 +55,8 @@ export default function MovieDetail() {
 
   const [movie, setMovie] = useState<Movie | null>(null);
   const [trailerUrl, setTrailerUrl] = useState<string | null>(null);
-  const [trailerDuration, setTrailerDuration] = useState<string | null>(null); // Store trailer duration
-  const [isTrailerOpen, setIsTrailerOpen] = useState(false); // Controls modal visibility
+  const [trailerDuration, setTrailerDuration] = useState<string | null>(null);
+  const [isTrailerOpen, setIsTrailerOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [director, setDirector] = useState<string>("Unknown");
