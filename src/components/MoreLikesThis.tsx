@@ -54,20 +54,21 @@ export default function MoreLikeThis() {
 
   return (
     <div className="mt-10 px-5">
+      {/* Title & See More Link */}
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">More like this</h2>
-        <Link href={`/movie/${id}/similar`} className=" flex items-center">
+        <h2 className="text-lg sm:text-xl font-semibold">More like this</h2>
+        <Link
+          href={`/movie/${id}/similar`}
+          className="flex items-center text-sm sm:text-base"
+        >
           See more <ArrowRight className="w-4 h-4 ml-1" />
         </Link>
       </div>
 
-      <div className="grid grid-cols-5 gap-4 mt-4">
+      {/* Responsive Grid for Movies */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-4">
         {similarMovies.map((movie) => (
-          <Link
-            key={movie.id}
-            href={`/movie/${movie.id}`}
-            className="group block"
-          >
+          <Link key={movie.id} href={`/movie/${movie.id}`} className="block">
             <div className="relative">
               <Image
                 src={`${TMDB_IMAGE_BASE_URL}/w500${movie.poster_path}`}
@@ -76,15 +77,17 @@ export default function MoreLikeThis() {
                 height={270}
                 className="w-full h-auto rounded-lg"
               />
-              <div className="p-2 bg-gray-100 dark:bg-[#262626]">
-                <div className="flex items-center text-xs ">
+              <div className="p-3 bg-gray-100 dark:bg-[#262626] flex flex-col flex-grow">
+                <div className="flex items-center text-xs font-medium text-gray-700 dark:text-gray-300">
                   <Star
-                    className="w-3 h-3 text-yellow-400 mr-1"
+                    className="w-3 sm:w-4 h-3 sm:h-4 text-yellow-400 mr-1"
                     fill="currentColor"
                   />
                   {movie.vote_average.toFixed(1)}/10
                 </div>
-                <h3 className="mt-1 text-lg font-medium">{movie.title}</h3>
+                <h3 className="mt-2 font-semibold min-h-[2.8rem] line-clamp-2">
+                  {movie.title}
+                </h3>
               </div>
             </div>
           </Link>

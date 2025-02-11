@@ -66,7 +66,7 @@ export default function GenreFilter() {
   };
 
   return (
-    <div className="p-4 bg-white shadow-md rounded-md w-full">
+    <div className="p-4 shadow-md rounded-md w-full dark:bg-[#262626]">
       <h2 className="text-lg font-semibold mb-2">Genres</h2>
       <p className="text-sm text-gray-500 mb-4">See lists of movies by genre</p>
       <div className="flex flex-wrap gap-2">

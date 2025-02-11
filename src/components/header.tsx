@@ -128,7 +128,7 @@ const Header = () => {
           {isGenreOpen && (
             <div
               ref={genreRef}
-              className="absolute top-12 left-0 bg-white shadow-lg rounded-lg p-5 w-[400px] z-50"
+              className="absolute top-12 left-0 bg-white dark:bg-[#262626] shadow-lg rounded-lg p-5 w-[400px] z-50"
             >
               <h3 className="text-lg font-bold">Genres</h3>
               <p className="text-sm text-gray-500 mb-3">
@@ -148,7 +148,7 @@ const Header = () => {
                       className={`px-3 py-2 text-sm rounded-full border cursor-pointer transition ${
                         selectedGenres.includes(genre.id)
                           ? "bg-black text-white border-black"
-                          : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                          : "bg-white text-gray-700 border-gray-300 dark:bg-[#262626] dark:text-white"
                       }`}
                     >
                       {genre.name}

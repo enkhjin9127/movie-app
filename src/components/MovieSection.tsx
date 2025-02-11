@@ -68,13 +68,14 @@ export default function MovieSection({ title, endpoint }: MovieSectionProps) {
 
         {/* Movie Grid */}
         {!loading && !error && movies.length > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 auto-rows-fr">
             {movies.map((movie) => (
               <div
                 key={movie.id}
-                className="rounded-lg shadow-md overflow-hidden cursor-pointer transition-transform duration-200 hover:scale-105 bg-white dark:bg-[#1a1a1a]"
+                className="rounded-lg shadow-md overflow-hidden cursor-pointer transition-transform duration-200 hover:scale-105 bg-white dark:bg-[#1a1a1a] flex flex-col h-full"
                 onClick={() => router.push(`/movie/${movie.id}`)}
               >
+                {/* Image */}
                 <div className="w-full h-[340px] overflow-hidden">
                   <Image
                     src={`${TMDB_IMAGE_BASE_URL}/w300${movie.poster_path}`}
@@ -84,7 +85,9 @@ export default function MovieSection({ title, endpoint }: MovieSectionProps) {
                     className="w-full h-full object-cover rounded-t-lg"
                   />
                 </div>
-                <div className="p-3 bg-gray-100 dark:bg-[#262626]">
+
+                {/* Movie Info */}
+                <div className="p-3 bg-gray-100 dark:bg-[#262626] flex flex-col flex-grow">
                   <div className="flex items-center text-xs font-medium text-gray-700 dark:text-gray-300">
                     <Star
                       className="w-4 h-4 text-yellow-400 mr-1"
@@ -92,7 +95,9 @@ export default function MovieSection({ title, endpoint }: MovieSectionProps) {
                     />
                     {movie.vote_average.toFixed(1)}/10
                   </div>
-                  <h3 className="mt-2 text-md font-semibold leading-tight">
+
+                  {/* Fix Title Height */}
+                  <h3 className="mt-2 font-semibold min-h-[2.8rem] line-clamp-2">
                     {movie.title}
                   </h3>
                 </div>

@@ -6,6 +6,7 @@ import axios from "axios";
 import GenreFilter from "@/components/GenreFilter";
 import Image from "next/image";
 import { Star } from "lucide-react";
+import Link from "next/link"; // ✅ Import Link
 
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_API_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_TOKEN;
@@ -57,8 +58,8 @@ export default function GenresPage() {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Movie Z - Genres</h1>
+    <div className="p-6 max-w-screen-xl mx-auto mt-[57px]">
+      <h1 className="text-2xl font-bold mb-4">Search Filter</h1>
 
       {/* Genre Filter with URL Sync */}
       <GenreFilter />
@@ -69,27 +70,29 @@ export default function GenresPage() {
           <p className="text-center col-span-full">Loading movies...</p>
         ) : (
           movies.map((movie) => (
-            <div
-              key={movie.id}
-              className="rounded-lg shadow-sm overflow-hidden cursor-pointer"
-            >
-              <Image
-                src={`${TMDB_IMAGE_BASE_URL}/w500${movie.poster_path}`}
-                alt={movie.title}
-                width={250}
-                height={375}
-                className="w-full h-auto rounded-lg"
-              />
-              <div className="p-2 bg-gray-100 dark:bg-[#262626]">
-                <div className="flex items-center text-xs ">
-                  <Star
-                    className="w-3 h-3 text-yellow-400 mr-1"
-                    fill="currentColor"
-                  />
-                  {movie.vote_average.toFixed(1)}/10
+            <Link href={`/movie/${movie.id}`} key={movie.id}>
+              <div className="rounded-lg shadow-sm overflow-hidden cursor-pointer transition-transform hover:scale-105">
+                <Image
+                  src={`${TMDB_IMAGE_BASE_URL}/w500${movie.poster_path}`}
+                  alt={movie.title}
+                  width={250}
+                  height={375}
+                  className="w-full h-auto rounded-lg"
+                />
+                <div className="p-3 bg-gray-100 dark:bg-[#262626] flex flex-col flex-grow">
+                  <div className="flex items-center text-xs font-medium text-gray-700 dark:text-gray-300">
+                    <Star
+                      className="w-4 h-4 text-yellow-400 mr-1"
+                      fill="currentColor"
+                    />
+                    {movie.vote_average.toFixed(1)}/10
+                  </div>
+                  <h3 className="mt-2 font-semibold min-h-[2.8rem] line-clamp-2">
+                    {movie.title}
+                  </h3>
                 </div>
               </div>
-            </div>
+            </Link>
           ))
         )}
       </div>
