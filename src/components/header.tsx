@@ -3,12 +3,21 @@
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Film, Search, Moon, Sun, ChevronDown } from "lucide-react";
+import {
+  Film,
+  Search,
+  Moon,
+  Sun,
+  ChevronDown,
+  ChevronRight,
+} from "lucide-react";
 import { Button } from "./ui/button";
 import SearchBar from "./SearchBar";
 import { useTheme } from "next-themes";
 import axios from "axios";
 import { Badge } from "./ui/badge";
+import { motion, AnimatePresence } from "framer-motion";
+import MobileSearchBar from "./MobileSearchBar";
 
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_API_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_TOKEN;
@@ -26,6 +35,7 @@ const Header = () => {
   const [genres, setGenres] = useState<Genre[]>([]);
   const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
   const [isGenreOpen, setIsGenreOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -107,80 +117,106 @@ const Header = () => {
   };
 
   return (
-    <div className="fixed top-0 inset-x-0 z-20 h-[59px] bg-background flex items-center justify-center">
-      <div className="flex items-center justify-between w-full max-w-screen-xl px-5 lg:px-0">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-x-2 text-indigo-700">
-          <Film className="w-5 h-5" />
-          <h4 className="font-bold italic text-base cursor-pointer">Movie Z</h4>
-        </Link>
-
-        {/* Genre Dropdown and Search */}
-        <div className="relative hidden lg:flex items-center gap-x-3">
-          <button
-            onClick={() => setIsGenreOpen(!isGenreOpen)}
-            className="w-[110px] h-9 text-sm font-medium flex items-center justify-between px-3 border rounded-md"
+    <>
+      {/* Mobile Search Overlay */}
+      <AnimatePresence>
+        {isMobileSearchOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="fixed inset-0 z-50"
           >
-            Genre <ChevronDown className="w-4 h-4" />
-          </button>
+            <MobileSearchBar onClose={() => setIsMobileSearchOpen(false)} />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-          {/* Genre Dropdown Menu */}
-          {isGenreOpen && (
-            <div
-              ref={genreRef}
-              className="absolute top-12 left-0 bg-white dark:bg-[#262626] shadow-lg rounded-lg p-5 w-[400px] z-50"
+      {/* Main Header */}
+      <div className="fixed top-0 inset-x-0 z-20 h-[59px] bg-background flex items-center justify-center">
+        <div className="flex items-center justify-between w-full max-w-screen-xl px-5 lg:px-0">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-x-2 text-indigo-700">
+            <Film className="w-5 h-5" />
+            <h4 className="font-bold italic text-base cursor-pointer">
+              Movie Z
+            </h4>
+          </Link>
+
+          {/* Genre Dropdown and Search (Desktop) */}
+          <div className="relative hidden lg:flex items-center gap-x-3">
+            <button
+              onClick={() => setIsGenreOpen(!isGenreOpen)}
+              className="w-[110px] h-10 text-sm font-medium flex items-center justify-between px-3 border rounded-md"
             >
-              <h3 className="text-lg font-bold">Genres</h3>
-              <p className="text-sm text-gray-500 mb-3">
-                See lists of movies by genre
-              </p>
-              <hr className="mb-3" />
+              Genre <ChevronDown className="w-4 h-4" />
+            </button>
 
-              {loading && <p className="text-center">Loading...</p>}
-              {error && <p className="text-red-500 text-center">{error}</p>}
+            {/* Genre Dropdown Menu */}
+            {isGenreOpen && (
+              <div
+                ref={genreRef}
+                className="absolute top-12 left-0 bg-white dark:bg-[#262626] shadow-lg rounded-lg p-5 w-[400px] z-50"
+              >
+                <h3 className="text-lg font-bold">Genres</h3>
+                <p className="text-sm text-gray-500 mb-3">
+                  See lists of movies by genre
+                </p>
+                <hr className="mb-3" />
 
-              {!loading && !error && genres.length > 0 && (
-                <div className="grid grid-cols-3 gap-2">
-                  {genres.map((genre) => (
-                    <Badge
-                      key={genre.id}
-                      onClick={() => handleGenreChange(genre.id)}
-                      className={`px-3 py-2 text-sm rounded-full border cursor-pointer transition ${
-                        selectedGenres.includes(genre.id)
-                          ? "bg-black text-white border-black"
-                          : "bg-white text-gray-700 border-gray-300 dark:bg-[#262626] dark:text-white"
-                      }`}
-                    >
-                      {genre.name}
-                    </Badge>
-                  ))}
-                </div>
-              )}
+                {loading && <p className="text-center">Loading...</p>}
+                {error && <p className="text-red-500 text-center">{error}</p>}
+
+                {!loading && !error && genres.length > 0 && (
+                  <div className="flex flex-wrap gap-4">
+                    {genres.map((genre) => (
+                      <Badge
+                        key={genre.id}
+                        onClick={() => handleGenreChange(genre.id)}
+                        className={`cursor-pointer rounded-full border h-[22px] transition ${
+                          selectedGenres.includes(genre.id)
+                            ? "bg-black text-white border-black"
+                            : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                        }`}
+                      >
+                        {genre.name}
+                        <ChevronRight className="h-4 w-4 ml-2" />
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Search Bar (Desktop) */}
+            <div className="relative text-muted-foreground w-[379px]">
+              <SearchBar />
             </div>
-          )}
+          </div>
 
-          {/* Search Bar */}
-          <div className="relative text-muted-foreground w-[379px]">
-            <SearchBar />
+          {/* Theme Toggle & Mobile Search */}
+          <div className="flex items-center gap-x-3">
+            <Button
+              className="w-9 h-9 sm:hidden"
+              variant={"outline"}
+              onClick={() => setIsMobileSearchOpen(true)}
+            >
+              <Search />
+            </Button>
+
+            {/* Theme Toggle */}
+            <Button
+              variant="outline"
+              className="w-9 h-9"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+              {theme === "dark" ? <Sun /> : <Moon />}
+            </Button>
           </div>
         </div>
-
-        {/* Theme Toggle & Mobile Search */}
-        <div className="flex items-center gap-x-3">
-          <Button className="w-9 h-9 sm:hidden" variant={"outline"}>
-            <Search />
-          </Button>
-
-          <Button
-            variant="outline"
-            className="w-9 h-9"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          >
-            {theme === "dark" ? <Sun /> : <Moon />}
-          </Button>
-        </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { Badge } from "@/components/ui/badge"; // Import Badge from shadcn/ui
+import { ChevronRight } from "lucide-react";
 
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_API_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_TOKEN;
@@ -74,13 +75,14 @@ export default function GenreFilter() {
           <Badge
             key={genre.id}
             onClick={() => handleGenreChange(genre.id)}
-            className={`cursor-pointer px-3 py-2 rounded-full border transition ${
+            className={`cursor-pointer rounded-full border h-[22px] transition ${
               selectedGenres.includes(genre.id)
                 ? "bg-black text-white border-black"
                 : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
             }`}
           >
             {genre.name}
+            <ChevronRight className="h-4 w-4 ml-2" />
           </Badge>
         ))}
       </div>

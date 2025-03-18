@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import axios from "axios";
-import { Search } from "lucide-react";
+import { Search, Star } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 
@@ -49,8 +49,8 @@ const SearchBar = () => {
   }, [query]);
 
   return (
-    <div className="relative ">
-      <div className="relative ">
+    <div className="relative">
+      <div className="relative">
         <Input
           type="text"
           placeholder="Search for movies..."
@@ -62,14 +62,17 @@ const SearchBar = () => {
       </div>
 
       {query && results.length > 0 && (
-        <div className="absolute w-full mt-2 bg-white dark:bg-gray-900 rounded-lg shadow-lg max-h-[250px] overflow-y-auto ">
+        <div className="absolute w-full mt-2 bg-white dark:bg-gray-900 rounded-lg shadow-lg max-h-[694px] overflow-y-auto max-w-xl">
           {loading && <p className="p-3 text-center text-sm">Loading...</p>}
           {!loading &&
             results.map((movie) => (
               <div
                 key={movie.id}
                 className="p-3 hover:bg-gray-200 dark:hover:bg-gray-800 cursor-pointer flex items-center gap-3"
-                onClick={() => router.push(`/movie/${movie.id}`)}
+                onClick={() => {
+                  router.push(`/movie/${movie.id}`);
+                  setQuery(""); // Closes the search results after clicking
+                }}
               >
                 <Image
                   src={`https://image.tmdb.org/t/p/w92${movie.poster_path}`}
@@ -80,9 +83,16 @@ const SearchBar = () => {
                 />
                 <div>
                   <p className="text-sm font-medium">{movie.title}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    ⭐ {movie.vote_average.toFixed(1)} / 10
-                  </p>
+                  <div className="flex items-center gap-x-2 mt-2">
+                    <Star
+                      className="w-5 h-5 text-[#FDE047]"
+                      fill="currentColor"
+                    />
+                    <span className="text-md font-semibold dark:text-white">
+                      {movie.vote_average.toFixed(1)}
+                    </span>
+                    <span className="text-sm dark:text-white">/10</span>
+                  </div>
                 </div>
               </div>
             ))}

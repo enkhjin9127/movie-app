@@ -70,7 +70,7 @@ export default function SimilarMoviesPage() {
       </div>
 
       {/* Title */}
-      <h2 className="text-xl font-semibold text-center mb-6">Similar Movies</h2>
+      <h2 className="text-4xl text-center mb-6">More Like This</h2>
 
       {/* Loading & Error Handling */}
       {loading && (

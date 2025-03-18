@@ -20,5 +20,6 @@ export default function Page() {
         endpoint="/movie/top_rated?language=en-US&page=1"
       />
     </div>
+    //hi
   );
 }

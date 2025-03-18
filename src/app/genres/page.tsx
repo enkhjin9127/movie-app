@@ -11,7 +11,7 @@ import Link from "next/link"; // ✅ Import Link
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_API_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_TOKEN;
 const TMDB_IMAGE_BASE_URL = process.env.NEXT_PUBLIC_TMDB_IMAGE_SERVICE_URL;
-
+//hi
 interface Movie {
   id: number;
   title: string;
